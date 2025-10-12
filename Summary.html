@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>确认好你的选择哦。然后Screenshot给我💕</title>
+  <link rel="stylesheet" href="Summary.css">
+</head>
+<body>
+<!-- Background video -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="Summarybg.mp4" type="video/mp4">
+  </video>
+
+  <!-- Background music -->
+  <audio id="bg-music" loop>
+    <source src="Summarymusic.mp3" type="audio/mp3">
+  </audio>
+
+  <div class="container">
+    <h1>💖 确认好哦！然后Screenshot给我吧💖</h1>
+    <div id="summary"></div>
+
+    <div class="button-row">
+  <button id="play-btn">🎶 Play Music</button>
+  <button onclick="window.location.href='index.html'">重新选</button>
+   </div>
+ 
+  </div>
+
+  <script>
+      
+    const summary = document.getElementById("summary");
+
+    // Load all saved selections
+    const dateChoice = localStorage.getItem("dateChoice") || "（没选）";
+    const open = localStorage.getItem("open") || "（没选）";
+    const lunch = localStorage.getItem("lunch") || "（没选）";
+    const destinations = JSON.parse(localStorage.getItem("destinations") || "[]");
+    const dessert = localStorage.getItem("dessert") || "（没选）";
+    const dinner = localStorage.getItem("dinner") || "（没选）";
+
+    // ✅ Add default destinations here
+    const defaultDestinations = ["买盒子💕", "拍合照（Photobooth）📸"];
+    const allDestinations = [...defaultDestinations, ...destinations];
+
+    // ✅ Generate the summary HTML
+    summary.innerHTML = `
+      <p><strong>📅 约会日期：</strong> ${dateChoice}</p>
+      <p><strong>🛻 开场安排：</strong> ${open}</p>
+      <p><strong>🍱 午餐：</strong> ${lunch}</p>
+      <p><strong>🎯 想去的地方：</strong></p>
+      <ul>${allDestinations.map(d => `<li>${d}</li>`).join("")}</ul>
+      <p><strong>🍰 甜品：</strong> ${dessert}</p>
+      <p><strong>🌇 晚餐：</strong> ${dinner}</p>
+    `;
+ // 🎵 Music button logic
+    const music = document.getElementById("bg-music");
+    const playBtn = document.getElementById("play-btn");
+
+    playBtn.addEventListener("click", () => {
+      if (music.paused) {
+        music.play();
+        playBtn.textContent = "⏸ Pause";
+      } else {
+        music.pause();
+        playBtn.textContent = "🎶 Play";
+      }
+    });
+  </script>
+</body>
+</html>
