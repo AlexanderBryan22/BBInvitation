@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Date Invitation</title>
+  <link rel="stylesheet" href="Invitation.css">
+</head>
+<body>
+  <!-- Background/video hearts (fallback to CSS background if video fails) -->
+  <video id="bg-video" autoplay muted loop playsinline preload="auto">
+    <source src="Invitation.mp4" type="video/mp4">
+    <!-- if video fails, the CSS will show a fallback background image -->
+  </video>
+
+  <!-- White rounded card container -->
+  <div class="container">
+    <!-- Bear video (poster fallback image if video not available) -->
+    <video id="bear-video" autoplay muted loop playsinline preload="auto" poster="bear-fallback.png">
+      <source src="Invitation2.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- A small clickable overlay to start the bear video if autoplay is blocked -->
+    <button id="bear-play" class="bear-play" aria-label="Play bear animation" title="Play">
+      ▶
+    </button>
+
+    <!-- Content on top of bear video -->
+    <div class="content">
+      <p class="headline">宝宝生日快乐！ 🎉</p>
+      <p class="subtitle">把元萱的一天送给我！૮₍ ˃ ⤙ ˂ ₎ა</p>
+
+      <!-- preset options -->
+      <div id="date-options">
+        <label><input type="radio" name="date" value="2025-11-01"> 周六，2025 11月一号</label>
+        <label><input type="radio" name="date" value="2025-11-02"> 周日，2025 11月二号</label>
+        <label><input type="radio" name="date" value="2025-11-08"> 周六，2025 11月八号</label>
+      </div>
+
+      <!-- custom inputs (hidden by default) -->
+      <div id="custom-date-inputs" style="display:none;">
+        <input type="number" id="day" placeholder="DD" min="1" max="31">
+        <input type="number" id="month" placeholder="MM" min="1" max="12">
+        <input type="number" id="year" placeholder="YYYY" min="2025" max="2100">
+      </div>
+
+      <!-- Buttons -->
+      <div class="button-container">
+        <button id="otherDateBtn" type="button">Other</button>
+        <button id="returnBtn" type="button" style="display:none;">Return</button>
+        <button id="nextBtn" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS: small behavior for custom date and video fallback -->
+  <script>
+    // --- Date UI logic (Other / Return / Next) ---
+    const dateOptions = document.getElementById('date-options');
+    const customInputs = document.getElementById('custom-date-inputs');
+    const otherBtn = document.getElementById('otherDateBtn');
+    const returnBtn = document.getElementById('returnBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const radios = document.getElementsByName('date');
+
+    otherBtn.addEventListener('click', () => {
+      dateOptions.style.display = 'none';
+      customInputs.style.display = 'block';
+      otherBtn.style.display = 'none';
+      returnBtn.style.display = 'inline-block';
+    });
+
+    returnBtn.addEventListener('click', () => {
+      customInputs.style.display = 'none';
+      dateOptions.style.display = 'block';
+      returnBtn.style.display = 'none';
+      otherBtn.style.display = 'inline-block';
+    });
+
+    nextBtn.addEventListener('click', () => {
+      let selected = null;
+      if (customInputs.style.display === 'block') {
+        const d = document.getElementById('day').value.padStart?.(2,'0') ?? document.getElementById('day').value;
+        const m = document.getElementById('month').value.padStart?.(2,'0') ?? document.getElementById('month').value;
+        const y = document.getElementById('year').value;
+        if (d && m && y) selected = `${y}-${m}-${d}`;
+      } else {
+        for (const r of radios) {
+          if (r.checked) { selected = r.value; break; }
+        }
+      }
+      if (selected) {
+        localStorage.setItem('dateChoice', selected);
+        // go to next page
+        location.href = 'Plan.html';
+      } else {
+        alert('Please pick or enter a date!');
+      }
+    });
+
+    // --- Bear video autoplay fallback: if browser blocks autoplay, show play button ---
+    const bear = document.getElementById('bear-video');
+    const bearPlay = document.getElementById('bear-play');
+
+    function hideBearPlay() {
+      bearPlay.style.opacity = '0';
+      bearPlay.style.pointerEvents = 'none';
+    }
+    function showBearPlay() {
+      bearPlay.style.opacity = '1';
+      bearPlay.style.pointerEvents = 'auto';
+    }
+
+    // Try to play; if play() returns a rejected promise, show overlay button
+    function tryAutoplayBear() {
+      if (!bear) return;
+      const p = bear.play();
+      if (p !== undefined) {
+        p.then(() => {
+          // autoplay succeeded
+          hideBearPlay();
+        }).catch(() => {
+          // autoplay blocked -> show play button
+          showBearPlay();
+        });
+      }
+    }
+
+    // click overlay to play/pause
+    bearPlay.addEventListener('click', () => {
+      if (bear.paused) {
+        bear.play().catch(()=>{});
+        hideBearPlay();
+      } else {
+        bear.pause();
+        showBearPlay();
+      }
+    });
+
+    // also if user interacts anywhere, try to play
+    document.addEventListener('click', () => {
+      tryAutoplayBear();
+    }, { once: true });
+
+    // run on load
+    window.addEventListener('load', tryAutoplayBear);
+  </script>
+</body>
+</html>
