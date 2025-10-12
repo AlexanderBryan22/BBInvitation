@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date</title>
+  <link rel="stylesheet" href="Plan.css">
+</head>
+<body>
+
+  <!-- Background video -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="Planbg.mp4" type="video/mp4">
+  </video>
+
+  <!-- Background music -->
+  <audio id="bg-music" loop>
+    <source src="Planmusic.mp3" type="audio/mp3">
+  </audio>
+
+  <!-- 🌸 Main container (all sections stacked vertically) -->
+  <div class="container">
+  <button id="play-btn" type="button">🎶 Play Music</button>
+  <h1>我小宝宝想要去哪里呀？</h1>
+
+    <!-- Destination 1 -->
+    <div class="Dest">
+      <p>你还记得你说想要帮我选衣服吗？</p>
+      <div class="radio">
+        <label><input type="radio" name="Open" value="我（Bryan）去接你然后再回去房间？">我（Bryan）去接你然后再回去房间？</label>
+        <label><input type="radio" name="Open" value="我们在你房间见吧">我们在你房间见吧</label>
+        <label><input type="radio" name="Open" value="我们就直接去其他地方见吧!">我们就直接去其他地方见吧!</label>
+      </div>
+    </div>
+
+    <!-- Destination 2 -->
+    <div class="Dest">
+      <p>首先，吃午餐！都是你喜欢的吧？或者你有其他想要的吗？</p>
+      <div class="radio">
+        <label><input type="radio" name="Lunch" value="Sushi!">Sushi!</label>
+        <label><input type="radio" name="Lunch" value="韩国餐!">韩国餐!</label>
+        <label>
+          <input type="radio" name="Lunch" value="" class="custom-option">
+          <input type="text" class="custom-input" placeholder="我想Request!" style="width:70%; padding:4px; border-radius:6px; border:1px solid #ccc;">
+        </label>
+      </div>
+    </div>
+
+    <!-- Destination 3 -->
+    <div class="Dest">
+      <p>然后想去哪里呢？我觉得你可以选3个！</p>
+      <div class="radio">
+        <label><input type="checkbox" name="Destination" value="REX KL">Rex KL</label>
+        <label><input type="checkbox" name="Destination" value="Aquaria KLCC">Aquaria KLCC</label>
+        <label><input type="checkbox" name="Destination" value="Dodome Kepong">Dodome Kepong</label>
+        <label><input type="checkbox" name="Destination" value="Berjaya Times Square">Berjaya Times Square</label>
+        <label><input type="checkbox" name="Destination" value="看电影！">看电影！</label>
+        <label><input type="checkbox" name="Destination" value="Perfume Factory/Leira Studio">Perfume Factory / Leira Studio</label>
+
+        <label>
+          <input type="checkbox" name="Destination" value="" class="custom-option">
+          <input type="text" class="custom-input" placeholder="我想Request!" style="width:30%; padding:2px; border-radius:0px; border:1px solid #ccc;">
+        </label>
+
+        <label>
+          <input type="checkbox" name="Destination" value="" class="custom-option">
+          <input type="text" class="custom-input" placeholder="有另外一个Request!" style="width:30%; padding:2px; border-radius:0px; border:1px solid #ccc;">
+        </label>
+
+        <label>
+          <input type="checkbox" name="Destination" value="" class="custom-option">
+          <input type="text" class="custom-input" placeholder="我三个都想Request!" style="width:30%; padding:2px; border-radius:0px; border:1px solid #ccc;">
+        </label>
+      </div>
+    </div>
+
+    <!-- Destination 4 -->
+    <div class="Dest">
+      <p>我宝宝最爱的甜品时间啦！这个就让你自己decide啦！</p>
+      <div class="field">
+        <input type="text" id="Dessert" placeholder="想吃什么甜品呀？" />
+      </div>
+    </div>
+
+    <!-- Destination 5 -->
+    <div class="Dest">
+      <p>午餐呢，我知道你想要去有Live band的对吧？但我不确定哦。但是！这是我做research的结果你看吧！</p>
+      <div class="radio">
+        <label><input type="radio" name="Dinner" value="Heli Lounge Bar">Heli Lounge bar</label>
+        <label><input type="radio" name="Dinner" value="Alva KL">Alva KL</label>
+        <label><input type="radio" name="Dinner" value="Envy Skydining">Envy Skydining</label>
+      </div>
+    </div>
+
+<form onsubmit="saveSelections(event)">
+  <button type="submit">Submit</button>
+</form>
+
+  </div> <!-- end of main container -->
+
+  <!-- 🌟 Scripts -->
+  <script>
+  // Limit selection to 3 checkboxes
+  const checkboxes = document.querySelectorAll('input[type="checkbox"][name="Destination"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      const checkedCount = document.querySelectorAll('input[type="checkbox"][name="Destination"]:checked').length;
+      if (checkedCount > 3) {
+        checkbox.checked = false;
+        alert("选三而已哦宝贝 💕");
+      }
+    });
+  });
+
+  // Make editable checkboxes work
+  document.querySelectorAll('.custom-input').forEach(input => {
+    const checkbox = input.previousElementSibling;
+    input.addEventListener('focus', () => checkbox.checked = true);
+    input.addEventListener('input', () => checkbox.value = input.value);
+  });
+
+  // 🎵 Music button
+  const music = document.getElementById("bg-music");
+  const playBtn = document.getElementById("play-btn");
+
+  playBtn.addEventListener("click", () => {
+    if (music.paused) {
+      music.play();
+      playBtn.textContent = "⏸ Pause Music";
+    } else {
+      music.pause();
+      playBtn.textContent = "🎶 Play Music";
+    }
+  });
+  // 🩷 Save all selected options before redirect
+  function saveSelections(e) {
+    e.preventDefault(); // stop default form action
+
+    // Collect radio selections
+    const open = document.querySelector('input[name="Open"]:checked')?.value || "";
+    const lunch = document.querySelector('input[name="Lunch"]:checked')?.value || "";
+    const dinner = document.querySelector('input[name="Dinner"]:checked')?.value || "";
+
+    // Collect dessert input
+    const dessert = document.getElementById("Dessert").value;
+
+    // Collect up to 3 destinations
+    const destinations = Array.from(document.querySelectorAll('input[name="Destination"]:checked'))
+      .map(cb => cb.value);
+
+    // Save all to localStorage
+    localStorage.setItem("open", open);
+    localStorage.setItem("lunch", lunch);
+    localStorage.setItem("destinations", JSON.stringify(destinations));
+    localStorage.setItem("dessert", dessert);
+    localStorage.setItem("dinner", dinner);
+
+    // Redirect to summary page
+    window.location.href = "Summary.html";
+  }
+
+</script>
+
+
+</body>
+</html>
